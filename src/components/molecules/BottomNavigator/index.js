@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {TabItem} from '../../atoms';
 import {colors} from '../../../utils';
@@ -38,17 +38,13 @@ export default function BottomNavigator({state, descriptors, navigation}) {
         };
 
         return (
-          //   <TouchableOpacity
-          //     accessibilityRole="button"
-          //     accessibilityState={isFocused ? {selected: true} : {}}
-          //     accessibilityLabel={options.tabBarAccessibilityLabel}
-          //     testID={options.tabBarTestID}
-          //     onPress={onPress}
-          //     onLongPress={onLongPress}
-          //     style={styles.buttonNavigation}>
-          //     <Text style={styles.textButton(isFocused)}>{label}</Text>
-          //   </TouchableOpacity>
-          <TabItem title={label} />
+          <TabItem
+            key={index}
+            title={label}
+            active={isFocused}
+            onPress={onPress}
+            onLongPress={onLongPress}
+          />
         );
       })}
     </View>

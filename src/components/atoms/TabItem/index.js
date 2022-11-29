@@ -1,30 +1,40 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {IconDoctor, IconHospitals, IconMessages} from '../../../assets';
+import {
+  IconDoctor,
+  IconDoctorActive,
+  IconHospitals,
+  IconHospitalsActive,
+  IconMessages,
+  IconMessagesActive,
+} from '../../../assets';
 import {colors, fonts} from '../../../utils';
 
-export default function TabItem({title}) {
+export default function TabItem({title, active, onPress, onLongPress}) {
   const Icon = () => {
     if (title === 'Doctor') {
-      return <IconDoctor />;
+      return active ? <IconDoctorActive /> : <IconDoctor />;
     }
 
     if (title === 'Messages') {
-      return <IconMessages />;
+      return active ? <IconMessagesActive /> : <IconMessages />;
     }
 
     if (title === 'Hospital') {
-      return <IconHospitals />;
+      return active ? <IconHospitalsActive /> : <IconHospitals />;
     }
 
     return <IconDoctor />;
   };
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      onLongPress={onLongPress}>
       <Icon />
-      <Text style={styles.text}>{title}</Text>
-    </View>
+      <Text style={styles.text(active)}>{title}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -32,10 +42,10 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  text: {
+  text: active => ({
     fontSize: 10,
-    color: colors.text.menuInactive,
+    color: active ? colors.text.menuActive : colors.text.menuInactive,
     fontFamily: fonts.primary[600],
     marginTop: 4,
-  },
+  }),
 });
