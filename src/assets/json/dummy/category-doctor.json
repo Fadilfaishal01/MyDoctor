@@ -10,14 +10,6 @@
         {
             "id": 3,
             "category": "dokter obat"
-        },
-        {
-            "id": 4,
-            "category": "dokter umum"
-        },
-        {
-            "id": 5,
-            "category": "psikiater"
         }
     ]
 }

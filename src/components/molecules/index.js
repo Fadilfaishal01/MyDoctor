@@ -4,6 +4,8 @@ import HomeProfile from './HomeProfile';
 import DoctorCategory from './DoctorCategory';
 import RatedDoctor from './RatedDoctor';
 import NewsItem from './NewsItem';
+import List from './List';
+import ListHospital from './ListHospital';
 
 export {
   Header,
@@ -12,4 +14,6 @@ export {
   DoctorCategory,
   RatedDoctor,
   NewsItem,
+  List,
+  ListHospital,
 };

@@ -8,10 +8,14 @@ import {
   Doctor,
   Messages,
   Hospital,
+  ListDoctor,
+  Chatting,
+  UserProfile,
 } from './../pages';
 import UploadPhoto from '../pages/UploadPhoto';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {BottomNavigator} from '../components/molecules';
+import UpdateProfile from '../pages/UpdateProfile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -69,6 +73,26 @@ const Router = () => {
       <Stack.Screen
         name="MainApp"
         component={MainApp}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ListDoctor"
+        component={ListDoctor}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Chatting"
+        component={Chatting}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfile}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="UpdateProfile"
+        component={UpdateProfile}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

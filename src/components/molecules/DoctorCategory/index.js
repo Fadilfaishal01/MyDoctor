@@ -1,15 +1,28 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {ILCatUmum} from '../../../assets';
+import {ILCatObat, ILCatPsikiater, ILCatUmum} from '../../../assets';
 import {colors, fonts} from '../../../utils';
 
-export default function DoctorCategory() {
+export default function DoctorCategory({category, onPress}) {
+  const Icon = () => {
+    switch (category) {
+      case 'dokter umum':
+        return <ILCatUmum style={styles.illustration} />;
+      case 'psikiater':
+        return <ILCatPsikiater style={styles.illustration} />;
+      case 'dokter obat':
+        return <ILCatObat style={styles.illustration} />;
+      default:
+        return <ILCatUmum style={styles.illustration} />;
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <ILCatUmum style={styles.illustration} />
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+      <Icon />
       <Text style={styles.label}>Saya butuh</Text>
-      <Text style={styles.category}>dokter umum</Text>
-    </View>
+      <Text style={styles.category}>{category}</Text>
+    </TouchableOpacity>
   );
 }
 
