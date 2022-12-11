@@ -6,6 +6,7 @@ import RatedDoctor from './RatedDoctor';
 import NewsItem from './NewsItem';
 import List from './List';
 import ListHospital from './ListHospital';
+import ProfileItem from './ProfileItem';
 
 export {
   Header,
@@ -16,4 +17,5 @@ export {
   NewsItem,
   List,
   ListHospital,
+  ProfileItem,
 };

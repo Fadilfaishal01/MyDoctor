@@ -11,6 +11,7 @@ import {
   ListDoctor,
   Chatting,
   UserProfile,
+  DoctorProfile,
 } from './../pages';
 import UploadPhoto from '../pages/UploadPhoto';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -93,6 +94,11 @@ const Router = () => {
       <Stack.Screen
         name="UpdateProfile"
         component={UpdateProfile}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DoctorProfile"
+        component={DoctorProfile}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

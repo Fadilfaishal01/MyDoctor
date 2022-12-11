@@ -5,22 +5,27 @@ import Profile from '../../components/molecules/Profile';
 import {Button, Gap, Input} from '../../components/atoms';
 import {colors} from '../../utils';
 
-export default function UpdateProfile() {
+export default function UpdateProfile({navigation}) {
   return (
     <View style={styles.page}>
-      <Header text="Edit Profile" />
+      <Header text="Edit Profile" onPress={() => navigation.goBack()} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Profile />
+          <Profile
+            name="Fadil Faishal Nafis"
+            description="Backend Developer"
+            isRemove
+          />
+          <Gap height={30} />
           <Input label="Nama Lengkap" />
-          <Gap height={24} />
+          <Gap height={20} />
           <Input label="Pekerjaan" />
-          <Gap height={24} />
+          <Gap height={20} />
           <Input label="Email" />
-          <Gap height={24} />
+          <Gap height={20} />
           <Input label="Kata Sandi" />
-          <Gap height={24} />
-          <Button title="Save Profile" />
+          <Gap height={40} />
+          <Button title="Save Profile" onPress={() => navigation.goBack()} />
         </View>
       </ScrollView>
     </View>

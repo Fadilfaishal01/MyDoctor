@@ -1,15 +1,15 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {DummyDoctor1, IconStar} from '../../../assets';
-import { colors, fonts } from '../../../utils';
+import {IconStar} from '../../../assets';
+import {colors, fonts} from '../../../utils';
 
-export default function RatedDoctor() {
+export default function RatedDoctor({onPress, name, avatar, description}) {
   return (
-    <View style={styles.container}>
-      <Image source={DummyDoctor1} style={styles.avatar} />
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+      <Image source={avatar} style={styles.avatar} />
       <View style={styles.profile}>
-        <Text style={styles.name}>Alexa Rachel</Text>
-        <Text style={styles.category}>Pediatrican</Text>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.category}>{description}</Text>
       </View>
       <View style={styles.rate}>
         <IconStar />
@@ -18,7 +18,7 @@ export default function RatedDoctor() {
         <IconStar />
         <IconStar />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 16,
+    alignItems: 'center',
   },
   profile: {
     flex: 1,
@@ -50,5 +51,5 @@ const styles = StyleSheet.create({
     fontFamily: fonts.primary.normal,
     color: colors.text.secondary,
     marginTop: 2,
-  }
+  },
 });
