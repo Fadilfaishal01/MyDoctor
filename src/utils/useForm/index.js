@@ -17,6 +17,9 @@ export const useForm = initalValue => {
       di parameter formParams, setelah itu kita akan mengambil semua value lama dari const value,
       lalu akan merubah datanya berdasarkan parameter formType diatas, dan mereturn semua data formnya
       */
+      if (formType === 'reset') {
+        return setValue(initalValue);
+      }
       return setValue({...value, [formType]: formParams.nativeEvent.text});
     },
   ];

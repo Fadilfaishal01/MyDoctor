@@ -7,6 +7,7 @@ const FirebaseConfig = firebase.initializeApp({
   storageBucket: 'mydoctor-769d8.appspot.com',
   messagingSenderId: '240048277741',
   appId: '1c1cc56edb230fa3ece4e4',
+  databaseURL: 'https://mydoctor-769d8-default-rtdb.firebaseio.com',
 });
 
 export default FirebaseConfig;

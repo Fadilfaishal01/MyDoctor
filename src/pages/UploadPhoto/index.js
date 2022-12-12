@@ -1,11 +1,12 @@
 import {StyleSheet, Image, View, Text} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Header} from '../../components/molecules';
-import {IconAddPhoto, ILNullPhoto} from './../../assets';
+import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from './../../assets';
 import {Button, Gap, Link} from '../../components/atoms';
 import {colors, fonts} from '../../utils';
 
 export default function UploadPhoto({navigation}) {
+  const [hasPhoto, setHasPhoto] = useState(false);
   return (
     <View style={styles.page}>
       <Header text="Upload Photo" onPress={() => navigation.goBack()} />
@@ -13,7 +14,8 @@ export default function UploadPhoto({navigation}) {
         <View style={styles.profile}>
           <View style={styles.avatarWrapper}>
             <Image source={ILNullPhoto} style={styles.avatar} />
-            <IconAddPhoto style={styles.addPhoto} />
+            {hasPhoto && <IconRemovePhoto style={styles.addPhoto} />}
+            {!hasPhoto && <IconAddPhoto style={styles.addPhoto} />}
           </View>
           <Text style={styles.name}>Fadil Faishal Nafis</Text>
           <Text style={styles.profession}>Backend Developer</Text>
