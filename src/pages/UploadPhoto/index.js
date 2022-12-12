@@ -1,22 +1,37 @@
-import {StyleSheet, Image, View, Text} from 'react-native';
+import {StyleSheet, Image, View, Text, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {Header} from '../../components/molecules';
 import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from './../../assets';
 import {Button, Gap, Link} from '../../components/atoms';
 import {colors, fonts} from '../../utils';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 export default function UploadPhoto({navigation}) {
   const [hasPhoto, setHasPhoto] = useState(false);
+  const getPhoto = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+        maxHeight: 200,
+        maxWidth: 200,
+      },
+      response => {
+        console.log('Response: ', response);
+      },
+    );
+  };
+
   return (
     <View style={styles.page}>
       <Header text="Upload Photo" onPress={() => navigation.goBack()} />
       <View style={styles.content}>
         <View style={styles.profile}>
-          <View style={styles.avatarWrapper}>
+          <TouchableOpacity style={styles.avatarWrapper} onPress={getPhoto}>
             <Image source={ILNullPhoto} style={styles.avatar} />
             {hasPhoto && <IconRemovePhoto style={styles.addPhoto} />}
             {!hasPhoto && <IconAddPhoto style={styles.addPhoto} />}
-          </View>
+          </TouchableOpacity>
           <Text style={styles.name}>Fadil Faishal Nafis</Text>
           <Text style={styles.profession}>Backend Developer</Text>
         </View>
