@@ -2,11 +2,11 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import {Header, Loading} from './../../components/molecules';
 import {Button, Gap, Input} from './../../components/atoms';
-import {useForm, colors} from '../../utils';
+import {useForm, colors, getData, storeData} from '../../utils';
 import {Database, FirebaseConfig} from './../../config';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {set, ref} from 'firebase/database';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
 
 export default function Register({navigation}) {
   const [form, setForm] = useForm({
@@ -26,6 +26,7 @@ export default function Register({navigation}) {
           fullname: form.fullname,
           profession: form.profession,
           email: form.email,
+          uid: userCredential.user.uid,
         };
 
         setLoading(false);
@@ -38,6 +39,12 @@ export default function Register({navigation}) {
 
         // Create data to realtime database firebase
         set(ref(Database, 'users/' + userCredential.user.uid), fieldDataUser);
+
+        // Store data to local storage
+        storeData('user', fieldDataUser);
+
+        // Redirect ke halaman upload photo dengan mengirimkan params data user
+        navigation.navigate('UploadPhoto', fieldDataUser);
       })
       .catch(error => {
         setLoading(false);

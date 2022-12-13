@@ -3,23 +3,46 @@ import React, {useState} from 'react';
 import {Header} from '../../components/molecules';
 import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from './../../assets';
 import {Button, Gap, Link} from '../../components/atoms';
-import {colors, fonts} from '../../utils';
+import {colors, fonts, storeData} from '../../utils';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {showMessage} from 'react-native-flash-message';
+import {update, ref} from 'firebase/database';
+import {Database} from '../../config';
 
-export default function UploadPhoto({navigation}) {
+export default function UploadPhoto({navigation, route}) {
+  const {fullname, profession, uid} = route.params;
   const [hasPhoto, setHasPhoto] = useState(false);
+  const [photo, setPhoto] = useState(ILNullPhoto);
+  const [photoForDB, setPhotoForDB] = useState('');
+
   const getPhoto = () => {
     launchImageLibrary(
-      {
-        mediaType: 'photo',
-        includeBase64: false,
-        maxHeight: 200,
-        maxWidth: 200,
-      },
+      {quality: 0.5, maxWidth: 200, maxHeight: 200, mediaType: 'photo'},
       response => {
-        console.log('Response: ', response);
+        if (response.didCancel || response.error) {
+          showMessage({
+            message: 'Oops, anda belum memilih foto',
+            type: 'warning',
+            icon: 'info',
+          });
+        } else {
+          // update data foto ke Realtime DB Firebase
+          const source = {uri: response.assets[0].uri};
+          setPhotoForDB(response.assets[0].uri);
+          setPhoto(source);
+          setHasPhoto(true);
+        }
       },
     );
+  };
+
+  const uploadAndContinue = () => {
+    const data = route.params;
+    data.photo = photoForDB;
+    update(ref(Database, 'users/' + uid), data);
+    // save data ke local storage dengan menambahkan data foto
+    storeData('user', data);
+    navigation.replace('MainApp');
   };
 
   return (
@@ -28,18 +51,18 @@ export default function UploadPhoto({navigation}) {
       <View style={styles.content}>
         <View style={styles.profile}>
           <TouchableOpacity style={styles.avatarWrapper} onPress={getPhoto}>
-            <Image source={ILNullPhoto} style={styles.avatar} />
+            <Image source={photo} style={styles.avatar} />
             {hasPhoto && <IconRemovePhoto style={styles.addPhoto} />}
             {!hasPhoto && <IconAddPhoto style={styles.addPhoto} />}
           </TouchableOpacity>
-          <Text style={styles.name}>Fadil Faishal Nafis</Text>
-          <Text style={styles.profession}>Backend Developer</Text>
+          <Text style={styles.name}>{fullname}</Text>
+          <Text style={styles.profession}>{profession}</Text>
         </View>
         <View>
-          <Button
-            title="Upload and continue"
-            onPress={() => navigation.replace('MainApp')}
-          />
+          {hasPhoto && (
+            <Button title="Upload and continue" onPress={uploadAndContinue} />
+          )}
+          {!hasPhoto && <Button title="Upload and continue" disable />}
           <Gap height={30} />
           <Link
             title="Skip for this"
@@ -70,8 +93,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatar: {
+    position: 'relative',
     width: 110,
     height: 110,
+    borderRadius: 130 / 2,
   },
   avatarWrapper: {
     width: 130,

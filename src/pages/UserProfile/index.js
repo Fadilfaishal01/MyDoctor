@@ -1,16 +1,39 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {Header, List} from './../../components/molecules';
 import Profile from '../../components/molecules/Profile';
 import {Gap} from '../../components/atoms';
-import {colors} from '../../utils';
+import {colors, getData} from '../../utils';
+import {ILNullPhoto} from '../../assets';
 
 export default function UserProfile({navigation}) {
+  const [profile, setProfile] = useState({
+    photo: ILNullPhoto,
+    fullname: '',
+    profession: '',
+  });
+
+  useEffect(() => {
+    getData('user').then(res => {
+      const data = res;
+      if (data.photo === undefined || data.photo === null) {
+        data.photo = ILNullPhoto;
+      } else {
+        data.photo = {uri: res.photo};
+      }
+      setProfile(data);
+    });
+  }, []);
+
   return (
     <View style={styles.page}>
       <Header text="Profile" onPress={() => navigation.goBack()} />
       <Gap height={10} />
-      <Profile name="Fadil Faishal Nafis" description="Backend Developer" />
+      <Profile
+        name={profile.fullname}
+        photo={profile.photo}
+        description={profile.profession}
+      />
       <Gap height={14} />
       <List
         name="Edit Profile"

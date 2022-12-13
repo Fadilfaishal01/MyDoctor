@@ -2,7 +2,13 @@ import {StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../../../utils/colors';
 
-export default function Input({label, value, onChangeText, typePassword}) {
+export default function Input({
+  label,
+  value,
+  onChangeText,
+  typePassword,
+  disable,
+}) {
   var textPlaceholder = 'Masukan ' + label;
   const [border, setBorder] = useState(colors.border);
   const onFocusForm = () => {
@@ -23,6 +29,8 @@ export default function Input({label, value, onChangeText, typePassword}) {
         value={value}
         onChange={onChangeText}
         secureTextEntry={typePassword} // Untuk membuat inputan menjadi secure atau tidak dapat dilihat oleh orang lain
+        editable={!disable} // untuk membuatnya menjadi disable
+        selectTextOnFocus={!disable} // untuk membuatnya menjadi disable
       />
     </View>
   );
