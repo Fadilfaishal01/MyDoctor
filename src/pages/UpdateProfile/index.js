@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Header} from '../../components/molecules';
 import Profile from '../../components/molecules/Profile';
@@ -6,7 +6,13 @@ import {Button, Gap, Input} from '../../components/atoms';
 import {colors, getData, storeData} from '../../utils';
 import {ILNullPhoto} from '../../assets';
 import {child, get, getDatabase, ref, update} from 'firebase/database';
-import {Database} from '../../config';
+import {
+  getAuth,
+  onAuthStateChanged,
+  updatePassword,
+  reauthenticateWithCredential,
+} from 'firebase/auth';
+import {Database, FirebaseConfig} from '../../config';
 import {showMessage} from 'react-native-flash-message';
 
 export default function UpdateProfile({navigation}) {
@@ -21,16 +27,31 @@ export default function UpdateProfile({navigation}) {
   const [password, setPassword] = useState('');
 
   const updateProfile = () => {
-    const dataSementara = {
-      fullname: profile.fullname,
-      profession: profile.profession,
-    };
-
     const data = profile;
-    data.photo = profile.photo.uri;
+    data.photo = profile.photo;
+
+    const auth = getAuth();
     const dbRef = ref(getDatabase());
-    // update(ref(Database, 'users/' + data.uid), data)
-    update(ref(Database, 'users/' + data.uid), dataSementara)
+
+    if (password.length > 0 && password.length < 8) {
+      showMessage({
+        message: 'Password minimal 8 karakter',
+        type: 'danger',
+        icon: 'danger',
+      });
+    } else if (password.length > 0 && password.length >= 8) {
+      // Fungsi untuk merubah password
+      updatePassword(auth.currentUser, password).catch(error => {
+        showMessage({
+          message: error.message,
+          type: 'danger',
+          icon: 'danger',
+        });
+      });
+    }
+
+    // Fungsi untuk merubah data profile biasa
+    update(ref(Database, 'users/' + data.uid), data)
       .then(() => {
         get(child(dbRef, `users/${data.uid}`))
           .then(resDB => {
@@ -74,7 +95,7 @@ export default function UpdateProfile({navigation}) {
       if (data.photo === undefined || data.photo === null) {
         data.photo = ILNullPhoto;
       } else {
-        data.photo = {uri: res.photo};
+        data.photo = res.photo;
       }
       setProfile(data);
     });
@@ -100,7 +121,12 @@ export default function UpdateProfile({navigation}) {
           <Gap height={20} />
           <Input label="Email" value={profile.email} disable />
           <Gap height={20} />
-          <Input label="Kata Sandi" typePassword value={password} />
+          <Input
+            label="Kata Sandi"
+            typePassword
+            value={password}
+            onChangeText={value => setPassword(value.nativeEvent.text)}
+          />
           <Gap height={40} />
           <Button title="Save Profile" onPress={updateProfile} />
         </View>

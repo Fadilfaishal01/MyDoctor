@@ -5,6 +5,9 @@ import Profile from '../../components/molecules/Profile';
 import {Gap} from '../../components/atoms';
 import {colors, getData} from '../../utils';
 import {ILNullPhoto} from '../../assets';
+import {getAuth, signOut} from 'firebase/auth';
+import {FirebaseConfig} from '../../config';
+import { showMessage } from 'react-native-flash-message';
 
 export default function UserProfile({navigation}) {
   const [profile, setProfile] = useState({
@@ -24,6 +27,26 @@ export default function UserProfile({navigation}) {
       setProfile(data);
     });
   }, []);
+
+  const logout = () => {
+    const auth = getAuth(FirebaseConfig);
+    signOut(auth)
+      .then(() => {
+        showMessage({
+          message: 'Berhasil logout',
+          type: 'success',
+          icon: 'success',
+        });
+        navigation.navigate('Login');
+      })
+      .catch(error => {
+        showMessage({
+          message: error.message,
+          type: 'danger',
+          icon: 'danger',
+        });
+      });
+  };
 
   return (
     <View style={styles.page}>
@@ -50,6 +73,12 @@ export default function UserProfile({navigation}) {
       />
       <List name="Rate" desc="last Update Yesterday" icon="rate" type="next" />
       <List name="Help" desc="last Update Yesterday" icon="help" type="next" />
+      <List
+        name="Logout"
+        desc="last Update Yesterday"
+        icon="help"
+        onPress={logout}
+      />
     </View>
   );
 }
