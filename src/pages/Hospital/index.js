@@ -39,7 +39,7 @@ export default function Hospital() {
           {hospital.map(item => {
             return (
               <ListHospital
-                key={item.id}
+                key={item.name}
                 title={item.name}
                 type={item.type}
                 address={item.location}
