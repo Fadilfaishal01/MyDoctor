@@ -3,17 +3,19 @@ import React, {useEffect, useState} from 'react';
 import {Header} from '../../components/molecules';
 import Profile from '../../components/molecules/Profile';
 import {Button, Gap, Input} from '../../components/atoms';
-import {colors, getData, storeData} from '../../utils';
+import {
+  colors,
+  getData,
+  showError,
+  showSuccess,
+  showWarning,
+  storeData,
+} from '../../utils';
 import {ILNullPhoto} from '../../assets';
 import {child, get, getDatabase, ref, update} from 'firebase/database';
-import {
-  getAuth,
-  onAuthStateChanged,
-  updatePassword,
-  reauthenticateWithCredential,
-} from 'firebase/auth';
-import {Database, FirebaseConfig} from '../../config';
-import {showMessage} from 'react-native-flash-message';
+import {getAuth, updatePassword} from 'firebase/auth';
+import {Database} from '../../config';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 export default function UpdateProfile({navigation}) {
   const [profile, setProfile] = useState({
@@ -25,61 +27,75 @@ export default function UpdateProfile({navigation}) {
   });
 
   const [password, setPassword] = useState('');
+  const [photo, setPhoto] = useState(ILNullPhoto);
 
   const updateProfile = () => {
-    const data = profile;
-    data.photo = profile.photo;
-
-    const auth = getAuth();
-    const dbRef = ref(getDatabase());
-
     if (password.length > 0 && password.length < 8) {
-      showMessage({
-        message: 'Password minimal 8 karakter',
-        type: 'danger',
-        icon: 'danger',
-      });
+      return showWarning('Password of at least 8 characters');
     } else if (password.length > 0 && password.length >= 8) {
-      // Fungsi untuk merubah password
-      updatePassword(auth.currentUser, password).catch(error => {
-        showMessage({
-          message: error.message,
-          type: 'danger',
-          icon: 'danger',
-        });
-      });
+      updatePasswordUser();
+      updateProfileUser();
+      navigation.replace('UserProfile');
+    }
+    updateProfileUser();
+    navigation.replace('UserProfile');
+  };
+
+  const updatePasswordUser = () => {
+    // Fungsi untuk merubah password
+    const auth = getAuth();
+    updatePassword(auth.currentUser, password).catch(error => {
+      showError(error.message);
+    });
+  };
+
+  const updateProfileUser = () => {
+    const data = profile;
+    data.photo = photo;
+
+    if (data.fullname === '') {
+      return showWarning('Fullname is required');
+    } else if (data.fullname < 5) {
+      return showWarning('Fullname of at least 5 characters');
     }
 
+    if (data.profession === '') {
+      showWarning('Profession is required');
+    }
+
+    const dbRef = ref(getDatabase());
     // Fungsi untuk merubah data profile biasa
     update(ref(Database, 'users/' + data.uid), data)
       .then(() => {
         get(child(dbRef, `users/${data.uid}`))
           .then(resDB => {
             if (resDB.val()) {
-              showMessage({
-                message: 'Berhasil mengubah data profile',
-                type: 'success',
-                icon: 'success',
-              });
               storeData('user', resDB.val());
-              navigation.replace('UserProfile');
+              showSuccess('Successfully to update data profile');
             }
           })
           .catch(errorDB => {
-            showMessage({
-              message: errorDB.message,
-              type: 'danger',
-              icon: 'danger',
-            });
+            showError(errorDB.message);
           });
       })
       .catch(error => {
-        showMessage({
-          message: error.message,
-          type: 'danger',
-          icon: 'danger',
-        });
+        showError(error.message);
       });
+  };
+
+  const getPhoto = () => {
+    launchImageLibrary(
+      {quality: 0.5, maxWidth: 200, maxHeight: 200, mediaType: 'photo'},
+      response => {
+        if (response.didCancel || response.error) {
+          showWarning(`Oops, you haven't selected a photo`);
+        } else {
+          // update data foto ke Realtime DB Firebase
+          const source = {uri: response.assets[0].uri};
+          setPhoto(source);
+        }
+      },
+    );
   };
 
   const changeText = (key, value) => {
@@ -93,9 +109,9 @@ export default function UpdateProfile({navigation}) {
     getData('user').then(res => {
       const data = res;
       if (data.photo === undefined || data.photo === null) {
-        data.photo = ILNullPhoto;
+        setPhoto(ILNullPhoto);
       } else {
-        data.photo = res.photo;
+        setPhoto(data.photo);
       }
       setProfile(data);
     });
@@ -106,7 +122,7 @@ export default function UpdateProfile({navigation}) {
       <Header text="Edit Profile" onPress={() => navigation.goBack()} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Profile photo={profile.photo} isRemove />
+          <Profile photo={photo} isRemove onPress={getPhoto} />
           <Input
             label="Nama Lengkap"
             value={profile.fullname}

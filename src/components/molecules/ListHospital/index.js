@@ -5,7 +5,7 @@ import {colors, fonts} from '../../../utils';
 export default function ListHospital({title, type, address, pic}) {
   return (
     <View style={styles.container}>
-      <Image source={pic} style={styles.picture} />
+      <Image source={{uri: pic}} style={styles.picture} />
       <View>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.title}>{type}</Text>

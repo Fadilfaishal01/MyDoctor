@@ -3,9 +3,8 @@ import React, {useState} from 'react';
 import {Header} from '../../components/molecules';
 import {IconAddPhoto, IconRemovePhoto, ILNullPhoto} from './../../assets';
 import {Button, Gap, Link} from '../../components/atoms';
-import {colors, fonts, storeData} from '../../utils';
+import {colors, fonts, showWarning, storeData} from '../../utils';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {showMessage} from 'react-native-flash-message';
 import {update, ref} from 'firebase/database';
 import {Database} from '../../config';
 
@@ -20,11 +19,7 @@ export default function UploadPhoto({navigation, route}) {
       {quality: 0.5, maxWidth: 200, maxHeight: 200, mediaType: 'photo'},
       response => {
         if (response.didCancel || response.error) {
-          showMessage({
-            message: 'Oops, anda belum memilih foto',
-            type: 'warning',
-            icon: 'info',
-          });
+          showWarning(`Oops, you haven't selected a photo`);
         } else {
           // update data foto ke Realtime DB Firebase
           const source = {uri: response.assets[0].uri};

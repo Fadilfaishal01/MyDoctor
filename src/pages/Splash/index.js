@@ -7,16 +7,19 @@ import {FirebaseConfig} from '../../config';
 
 export default function Splash({navigation}) {
   useEffect(() => {
-    setTimeout(() => {
-      const auth = getAuth(FirebaseConfig);
-      onAuthStateChanged(auth, user => {
+    const auth = getAuth(FirebaseConfig);
+    // Melakukan pembersihan useeffect sehingga dia akan jalankan ketika berada di halaman ini saja
+    const unSubsribe = onAuthStateChanged(auth, user => {
+      setTimeout(() => {
         if (user) {
           navigation.replace('MainApp');
         } else {
           navigation.replace('GetStarted');
         }
-      });
-    }, 3000);
+      }, 3000);
+    });
+
+    return () => unSubsribe();
   }, []);
 
   return (

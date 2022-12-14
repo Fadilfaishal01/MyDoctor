@@ -3,11 +3,10 @@ import React, {useEffect, useState} from 'react';
 import {Header, List} from './../../components/molecules';
 import Profile from '../../components/molecules/Profile';
 import {Gap} from '../../components/atoms';
-import {colors, getData} from '../../utils';
+import {colors, getData, showError, showSuccess} from '../../utils';
 import {ILNullPhoto} from '../../assets';
 import {getAuth, signOut} from 'firebase/auth';
 import {FirebaseConfig} from '../../config';
-import { showMessage } from 'react-native-flash-message';
 
 export default function UserProfile({navigation}) {
   const [profile, setProfile] = useState({
@@ -22,7 +21,7 @@ export default function UserProfile({navigation}) {
       if (data.photo === undefined || data.photo === null) {
         data.photo = ILNullPhoto;
       } else {
-        data.photo = {uri: res.photo};
+        data.photo = data.photo;
       }
       setProfile(data);
     });
@@ -32,19 +31,11 @@ export default function UserProfile({navigation}) {
     const auth = getAuth(FirebaseConfig);
     signOut(auth)
       .then(() => {
-        showMessage({
-          message: 'Berhasil logout',
-          type: 'success',
-          icon: 'success',
-        });
-        navigation.navigate('Login');
+        showSuccess('Successfully for logout, Thank you');
+        navigation.navigate('GetStarted');
       })
       .catch(error => {
-        showMessage({
-          message: error.message,
-          type: 'danger',
-          icon: 'danger',
-        });
+        showError(error.message);
       });
   };
 
@@ -74,7 +65,7 @@ export default function UserProfile({navigation}) {
       <List name="Rate" desc="last Update Yesterday" icon="rate" type="next" />
       <List name="Help" desc="last Update Yesterday" icon="help" type="next" />
       <List
-        name="Logout"
+        name="Sign Out"
         desc="last Update Yesterday"
         icon="help"
         onPress={logout}

@@ -17,7 +17,7 @@ export default function HomeProfile({onpress}) {
       if (data.photo === undefined || data.photo === null) {
         data.photo = ILNullPhoto;
       } else {
-        data.photo = {uri: res.photo};
+        data.photo = data.photo;
       }
       setProfile(data);
     });

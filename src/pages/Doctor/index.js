@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   HomeProfile,
   DoctorCategory,
@@ -14,8 +14,19 @@ import {
   DummyDoctor3,
   JSONCategoryDoctor,
 } from '../../assets';
+import {child, get, getDatabase, ref} from 'firebase/database';
+import {FirebaseConfig} from '../../config';
 
 export default function Doctor({navigation}) {
+  const [news, setNews] = useState([]);
+  useEffect(() => {
+    const dbRef = ref(getDatabase(FirebaseConfig));
+    get(child(dbRef, 'news/')).then(res => {
+      if (res.val()) {
+        setNews(res.val());
+      }
+    });
+  }, []);
   return (
     <View style={styles.page}>
       <View style={styles.content}>
@@ -66,9 +77,19 @@ export default function Doctor({navigation}) {
             />
           </View>
           <Text style={styles.labelSection}>Good News</Text>
+          {news.map(item => {
+            return (
+              <NewsItem
+                key={item.id}
+                title={item.title}
+                date={item.date}
+                image={item.img}
+              />
+            );
+          })}
+          {/* <NewsItem />
           <NewsItem />
-          <NewsItem />
-          <NewsItem />
+          <NewsItem /> */}
           <Gap height={30} />
         </ScrollView>
       </View>

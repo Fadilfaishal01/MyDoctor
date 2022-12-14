@@ -5,7 +5,7 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   DummyHospital1,
   DummyHospital2,
@@ -14,35 +14,39 @@ import {
 } from '../../assets';
 import {colors, fonts} from '../../utils';
 import {ListHospital} from '../../components/molecules';
+import {child, get, getDatabase, ref} from 'firebase/database';
+import {FirebaseConfig} from '../../config';
 
 export default function Hospital() {
+  const [hospital, setHospital] = useState([]);
+  useEffect(() => {
+    const dbRef = ref(getDatabase(FirebaseConfig));
+    get(child(dbRef, 'hospital/')).then(res => {
+      if (res.val()) {
+        setHospital(res.val());
+      }
+    });
+  }, []);
   return (
     <View style={styles.page}>
       <ImageBackground source={ILHospitalBG} style={styles.background}>
         <Text style={styles.title}>Ciomas Hospital</Text>
-        <Text style={styles.desc}>3 Tersedia</Text>
+        <Text style={styles.desc}>{hospital.length} Tersedia</Text>
       </ImageBackground>
 
       <View style={styles.content}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <ListHospital
-            title="Hospital"
-            type="Hospital Children"
-            address="Bogor, Jl. Raya Bogor No. 1"
-            pic={DummyHospital1}
-          />
-          <ListHospital
-            title="Hospital"
-            type="Hospital Soul"
-            address="Bogor, Jl. Raya Bogor No. 2"
-            pic={DummyHospital2}
-          />
-          <ListHospital
-            title="Hospital"
-            type="Hospital General"
-            address="Bogor, Jl. Raya Bogor No. 3"
-            pic={DummyHospital3}
-          />
+          {hospital.map(item => {
+            return (
+              <ListHospital
+                key={item.id}
+                title={item.name}
+                type={item.type}
+                address={item.location}
+                pic={item.img}
+              />
+            );
+          })}
         </ScrollView>
       </View>
     </View>
