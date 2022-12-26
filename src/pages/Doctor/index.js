@@ -6,7 +6,7 @@ import {
   RatedDoctor,
   NewsItem,
 } from './../../components/molecules';
-import {colors, fonts} from '../../utils';
+import {colors, fonts, showError} from '../../utils';
 import {Gap} from '../../components/atoms';
 import {
   DummyDoctor1,
@@ -14,22 +14,70 @@ import {
   DummyDoctor3,
   JSONCategoryDoctor,
 } from '../../assets';
-import {child, get, getDatabase, ref} from 'firebase/database';
+import {
+  child,
+  get,
+  getDatabase,
+  ref,
+  orderByChild,
+  limitToLast,
+} from 'firebase/database';
 import {FirebaseConfig} from '../../config';
 import {useDispatch} from 'react-redux';
 
 export default function Doctor({navigation}) {
   const [news, setNews] = useState([]);
+  const [categoryDoctor, setCategoryDoctor] = useState([]);
+  const [rateDoctor, setRateDoctor] = useState([]);
+
+  const dbRef = ref(getDatabase(FirebaseConfig));
   const dispath = useDispatch();
 
   useEffect(() => {
-    const dbRef = ref(getDatabase(FirebaseConfig));
     get(child(dbRef, 'news/')).then(res => {
       if (res.val()) {
         setNews(res.val());
       }
     });
+
+    get(child(dbRef, 'category-doctor/'))
+      .then(res => {
+        if (res.val().length > 0) {
+          setCategoryDoctor(res.val());
+        }
+      })
+      .catch(err => {
+        showError(err.message());
+      });
+
+    getTopRateDoctor();
   }, []);
+
+  const parseObjectToArray = listRateDoctor => {
+    const data = [];
+    Object.keys(listRateDoctor).map(key => {
+      data.push({
+        id: key,
+        data: listRateDoctor[key],
+      });
+    });
+
+    return data;
+  };
+
+  const getTopRateDoctor = () => {
+    get(child(dbRef, 'doctors/'), orderByChild('rate'), limitToLast(3))
+      .then(res => {
+        if (res.val()) {
+          const data = parseObjectToArray(res.val());
+          setRateDoctor(data);
+        }
+      })
+      .catch(err => {
+        showError(err.message());
+      });
+  };
+
   return (
     <>
       <View style={styles.page}>
@@ -46,12 +94,14 @@ export default function Doctor({navigation}) {
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.category}>
                   <Gap width={32} />
-                  {JSONCategoryDoctor.data.map(item => {
+                  {categoryDoctor.map(valueCategory => {
                     return (
                       <DoctorCategory
-                        key={item.id}
-                        category={item.category}
-                        onPress={() => navigation.navigate('ListDoctor')}
+                        category={valueCategory.category}
+                        key={valueCategory.id}
+                        onPress={() =>
+                          navigation.navigate('ListDoctor', valueCategory)
+                        }
                       />
                     );
                   })}
@@ -61,24 +111,18 @@ export default function Doctor({navigation}) {
             </View>
             <Text style={styles.labelSection}>Top Rated Doctor</Text>
             <View style={styles.wrapperSection}>
-              <RatedDoctor
-                name="Fadil Faishal"
-                description="Dokter Anak"
-                avatar={DummyDoctor1}
-                onPress={() => navigation.navigate('DoctorProfile')}
-              />
-              <RatedDoctor
-                name="Alexa Rachel"
-                description="Dokter Gizi"
-                avatar={DummyDoctor2}
-                onPress={() => navigation.navigate('DoctorProfile')}
-              />
-              <RatedDoctor
-                name="Jhon Doe"
-                description="Dokter Syaraf"
-                avatar={DummyDoctor3}
-                onPress={() => navigation.navigate('DoctorProfile')}
-              />
+              {rateDoctor.map(item => {
+                return (
+                  <RatedDoctor
+                    key={item.id}
+                    name={item.data.fullname}
+                    description={item.data.category}
+                    avatar={item.data.photo}
+                    rate={item.data.rate}
+                    onPress={() => navigation.navigate('DoctorProfile', item)}
+                  />
+                );
+              })}
             </View>
             <Text style={styles.labelSection}>Good News</Text>
             {news.map(item => {

@@ -1,5 +1,5 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {Header, List} from '../../components/molecules';
 import {
   DummyDoctor1,
@@ -7,13 +7,41 @@ import {
   DummyDoctor3,
   DummyDoctor4,
 } from '../../assets';
-import {colors} from '../../utils';
+import {colors, showError} from '../../utils';
+import {
+  child,
+  equalTo,
+  get,
+  getDatabase,
+  orderByChild,
+  ref,
+  onValue,
+  orderByValue,
+  query,
+} from 'firebase/database';
+import {FirebaseConfig} from '../../config';
 
-export default function ListDoctor({navigation}) {
+export default function ListDoctor({navigation, route}) {
+  const itemCategory = route.params;
+  const dbRef = ref(getDatabase(FirebaseConfig));
+
+  useEffect(() => {
+    getListDoctorByCategory(itemCategory.category);
+  }, []);
+
+  const getListDoctorByCategory = category => {
+    get(child(dbRef, 'doctors'), orderByChild('category'), equalTo(category))
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   return (
     <View style={styles.page}>
       <Header
-        text="Choose Doctor"
+        text={`Pilih ${itemCategory.category}`}
         type="dark"
         onPress={() => navigation.goBack()}
       />

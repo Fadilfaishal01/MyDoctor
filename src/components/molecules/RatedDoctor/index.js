@@ -3,7 +3,13 @@ import React from 'react';
 import {IconStar} from '../../../assets';
 import {colors, fonts} from '../../../utils';
 
-export default function RatedDoctor({onPress, name, avatar, description}) {
+export default function RatedDoctor({
+  onPress,
+  name,
+  avatar,
+  description,
+  rate,
+}) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image source={avatar} style={styles.avatar} />
@@ -12,8 +18,6 @@ export default function RatedDoctor({onPress, name, avatar, description}) {
         <Text style={styles.category}>{description}</Text>
       </View>
       <View style={styles.rate}>
-        <IconStar />
-        <IconStar />
         <IconStar />
         <IconStar />
         <IconStar />

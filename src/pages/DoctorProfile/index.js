@@ -5,18 +5,23 @@ import Profile from '../../components/molecules/Profile';
 import {Button, Gap} from '../../components/atoms';
 import {colors} from '../../utils';
 
-export default function DoctorProfile({navigation}) {
+export default function DoctorProfile({navigation, route}) {
+  const dataDoctor = route.params;
   return (
     <View style={styles.container}>
       <Header text="Doctor Profile" onPress={() => navigation.goBack()} />
-      <Profile name="Fadil Faishal Nafis" description="Dokter Anak" />
+      <Profile
+        photo={dataDoctor.data.photo}
+        name={dataDoctor.data.fullname}
+        description={dataDoctor.data.category}
+      />
       <Gap height={10} />
-      <ProfileItem label="Alumnus" description="Universitas Terbuka, 2021" />
+      <ProfileItem label="Alumnus" description={dataDoctor.data.university} />
       <ProfileItem
         label="Tempat Praktik"
-        description="Rumah Sakit Bogor, 2022"
+        description={dataDoctor.data.hospital_address}
       />
-      <ProfileItem label="No. STR" description="00041244123" />
+      <ProfileItem label="No. STR" description={dataDoctor.data.str_number} />
       <View style={styles.action}>
         <Button
           title="Start Consultation"

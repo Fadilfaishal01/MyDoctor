@@ -6,11 +6,11 @@ import {colors, fonts} from '../../../utils';
 export default function DoctorCategory({category, onPress}) {
   const Icon = () => {
     switch (category) {
-      case 'dokter umum':
+      case 'Dokter Anak':
         return <ILCatUmum style={styles.illustration} />;
-      case 'psikiater':
+      case 'Dokter Cinta':
         return <ILCatPsikiater style={styles.illustration} />;
-      case 'dokter obat':
+      case 'Dokter Kandungan':
         return <ILCatObat style={styles.illustration} />;
       default:
         return <ILCatUmum style={styles.illustration} />;
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
     width: 100,
-    height: 130,
+    height: 150,
   },
   illustration: {
     marginBottom: 28,
