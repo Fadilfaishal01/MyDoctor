@@ -7,7 +7,7 @@ import {
   DummyDoctor3,
   DummyDoctor4,
 } from '../../assets';
-import {colors, showError} from '../../utils';
+import {colors} from '../../utils';
 import {
   child,
   equalTo,
@@ -15,9 +15,6 @@ import {
   getDatabase,
   orderByChild,
   ref,
-  onValue,
-  orderByValue,
-  query,
 } from 'firebase/database';
 import {FirebaseConfig} from '../../config';
 

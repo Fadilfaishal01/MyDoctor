@@ -9,12 +9,6 @@ import {
 import {colors, fonts, showError} from '../../utils';
 import {Gap} from '../../components/atoms';
 import {
-  DummyDoctor1,
-  DummyDoctor2,
-  DummyDoctor3,
-  JSONCategoryDoctor,
-} from '../../assets';
-import {
   child,
   get,
   getDatabase,

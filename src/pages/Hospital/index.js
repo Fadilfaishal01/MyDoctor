@@ -6,12 +6,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {
-  DummyHospital1,
-  DummyHospital2,
-  DummyHospital3,
-  ILHospitalBG,
-} from '../../assets';
+import {ILHospitalBG} from '../../assets';
 import {colors, fonts} from '../../utils';
 import {ListHospital} from '../../components/molecules';
 import {child, get, getDatabase, ref} from 'firebase/database';
